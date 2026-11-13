@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HandBook</title>
+    <style>
+        :root {
+            --primary: #1877f2;
+            --primary-hover: #165fe5;
+            --bg: #f0f2f5;
+            --white: #ffffff;
+            --text: #050505;
+            --gray: #65676b;
+            --border: #ced0d4;
+            --online: #31a24c;
+            --danger: #d32f2f;
+            --msg-bubble: #e4e6eb;
+            --msg-my-bubble: #0084ff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #18191a; display: flex; justify-content: center; color: var(--text); }
+        
+        /* Mobile Container */
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--bg);
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 65px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.6);
+        }
+
+        /* --- AUTH SCREEN --- */
+        #auth-screen {
+            position: fixed;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 450px; height: 100vh;
+            background: linear-gradient(135deg, #1877f2 0%, #004e92 100%);
+            z-index: 1000;
+            display: flex; flex-direction: column;
+            justify-content: space-between; align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .auth-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; margin: auto 0; }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            width: 100%; padding: 25px 20px;
+            border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .brand-logo { color: var(--primary); font-size: 36px; font-weight: 900; margin-bottom: 4px; letter-spacing: -1px; }
+        .brand-tagline { color: var(--gray); font-size: 13px; margin-bottom: 18px; font-weight: 500; }
+        .auth-container { width: 100%; text-align: left; }
+        
+        .auth-input { 
+            width: 100%; padding: 11px 14px; margin: 5px 0; 
+            border: 1.5px solid var(--border); border-radius: 10px; 
+            font-size: 14px; background: #fdfdfd; outline: none; transition: 0.2s;
+        }
+        .auth-input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.15); }
+        .auth-input.invalid { border-color: var(--danger); background: #fff8f8; }
+        .auth-input.valid { border-color: var(--online); }
+
+        .field-hint { font-size: 11px; margin-bottom: 4px; display: none; font-weight: 600; padding-left: 4px; }
+        .field-hint.err { color: var(--danger); display: block; }
+        .field-hint.ok { color: var(--online); display: block; }
+
+        .name-row { display: flex; gap: 8px; }
+        .dob-container { margin: 6px 0; }
+        .dob-label { font-size: 11px; color: var(--gray); margin-bottom: 2px; display: block; font-weight: 700; text-transform: uppercase; }
+        
+        .auth-btn { 
+            width: 100%; padding: 13px; background: var(--primary); color: white; 
+            border: none; border-radius: 10px; font-size: 16px; font-weight: bold; 
+            margin-top: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+        }
+        .auth-btn:active { transform: scale(0.98); }
+        .toggle-auth { text-align: center; margin-top: 16px; font-size: 13px; color: var(--gray); }
+        .toggle-auth span { color: var(--primary); font-weight: 700; cursor: pointer; }
+        .forgot-pass { text-align: right; margin-top: 6px; font-size: 12px; }
+        .forgot-pass span { color: var(--primary); cursor: pointer; font-weight: 600; }
+
+        .error-msg { color: #d32f2f; background: #ffebee; padding: 8px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; display: none; font-weight: 600; text-align: center; }
+        .success-msg { color: #2e7d32; background: #e8f5e9; padding: 8px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; display: none; font-weight: 600; text-align: center; }
+
+        /* TAT Footer */
+        .tat-footer { margin-top: 15px; text-align: center; color: rgba(255, 255, 255, 0.85); user-select: none; }
+        .tat-from { font-size: 10px; letter-spacing: 2px; text-transform: lowercase; opacity: 0.8; display: block; }
+        .tat-brand {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 18px; font-weight: 900; letter-spacing: 2px;
+            background: linear-gradient(90deg, #ffffff 0%, #a8e6cf 50%, #74ebd5 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .tat-footer-dark { margin: 25px 0 15px; text-align: center; }
+        .tat-footer-dark .tat-from { color: #65676b; font-size: 10px; letter-spacing: 2px; }
+        .tat-footer-dark .tat-brand {
+            background: linear-gradient(90deg, #1877f2 0%, #00c6ff 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 17px; font-weight: 900; letter-spacing: 2px;
+        }
+
+        /* --- FACEBOOK STYLE TOP HEADER --- */
+        .header {
+            background: var(--white);
+            padding: 10px 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .header h1 { color: var(--primary); font-size: 26px; font-weight: 900; letter-spacing: -1px; }
+        .header-icons { display: flex; gap: 8px; }
+        .header-btn { 
+            width: 36px; height: 36px; border-radius: 50%; background: #e4e6eb; border: none; 
+            display: flex; justify-content: center; align-items: center; font-size: 16px; cursor: pointer; color: #050505;
+        }
+
+        /* --- MESSENGER MODAL STYLE --- */
+        #messenger-screen {
+            position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 450px; height: 100vh;
+            background: var(--white); z-index: 200; display: none;
+            flex-direction: column; animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
+        
+        .msg-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: #fff; }
+        .msg-header-left { display: flex; align-items: center; gap: 10px; }
+        .msg-back-btn { background: none; border: none; font-size: 20px; font-weight: bold; cursor: pointer; color: var(--primary); }
+        .msg-title { font-size: 18px; font-weight: 800; color: var(--text); }
+        
+        .msg-chat-list { flex: 1; overflow-y: auto; padding: 10px; }
+        .chat-contact-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+        .chat-contact-item:hover { background: #f0f2f5; }
+        .contact-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--primary); color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; position: relative; flex-shrink: 0; }
+        .online-dot { width: 12px; height: 12px; background: var(--online); border: 2px solid white; border-radius: 50%; position: absolute; bottom: 0; right: 0; }
+        .contact-info { flex: 1; }
+        .contact-name { font-weight: bold; font-size: 15px; color: var(--text); }
+        .contact-sub { font-size: 13px; color: var(--gray); }
+
+        /* Inside Chat Window */
+        .chat-window { display: none; flex-direction: column; height: 100%; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; background: #fff; }
+        .bubble { max-width: 70%; padding: 10px 14px; border-radius: 18px; font-size: 15px; line-height: 1.4; word-break: break-word; }
+        .bubble.incoming { background: var(--msg-bubble); color: var(--text); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .bubble.outgoing { background: var(--msg-my-bubble); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        
+        /* Emoji Picker Bar */
+        .emoji-bar { display: flex; gap: 8px; padding: 8px 12px; background: #f8f9fa; border-top: 1px solid var(--border); overflow-x: auto; }
+        .emoji-btn { background: white; border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0; transition: 0.1s; }
+        .emoji-btn:active { transform: scale(0.9); }
+
+        .chat-input-bar { padding: 10px 15px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 8px; background: #fff; }
+        .chat-input-bar input { flex: 1; padding: 10px 15px; border: 1px solid var(--border); border-radius: 20px; outline: none; font-size: 14px; background: #f0f2f5; }
+        .chat-send-btn { background: var(--primary); color: white; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; cursor: pointer; flex-shrink: 0; }
+
+        /* --- FRIENDS TAB STYLING --- */
+        .friends-container { padding: 12px; }
+        .friend-card { background: white; padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .friend-info { display: flex; align-items: center; gap: 12px; }
+        .friend-btn { background: #e7f3ff; color: var(--primary); border: none; padding: 7px 14px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; }
+        .friend-btn.accepted { background: #e8f5e9; color: var(--online); }
+
+        /* --- FB STYLE NEWS FEED --- */
+        .fb-create-post { background: var(--white); padding: 10px 12px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .fb-post-input-row { display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; flex-shrink: 0; }
+        .fb-fake-input { 
+            width: 100%; background: #f0f2f5; border: 1px solid var(--border); border-radius: 20px; 
+            padding: 9px 15px; font-size: 14px; color: var(--gray); outline: none; cursor: pointer; text-align: left;
+        }
+        .fb-post-options { display: flex; justify-content: space-around; padding-top: 8px; }
+        .fb-opt-btn { background: none; border: none; font-size: 13px; font-weight: 600; color: var(--gray); display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+        .fb-opt-btn:hover { background: #f0f2f5; }
+
+        /* Stories Section */
+        .fb-stories-container { display: flex; gap: 8px; padding: 10px; background: var(--white); margin-bottom: 8px; overflow-x: auto; scrollbar-width: none; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .fb-stories-container::-webkit-scrollbar { display: none; }
+        .story-card { 
+            min-width: 100px; height: 160px; border-radius: 12px; background: #ddd; position: relative; 
+            overflow: hidden; cursor: pointer; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            display: flex; flex-direction: column; justify-content: space-between; padding: 8px; color: white; font-weight: bold; font-size: 12px;
+        }
+        .story-card.create-story { background: white; color: var(--text); border: 1px solid var(--border); justify-content: flex-end; align-items: center; text-align: center; }
+        .story-avatar-small { width: 32px; height: 32px; border-radius: 50%; border: 3px solid var(--primary); background: #ccc; display: flex; justify-content: center; align-items: center; font-size: 14px; color: white; }
+
+        /* Post Cards */
+        .fb-post-card { background: var(--white); margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .fb-post-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; }
+        .fb-author-row { display: flex; gap: 10px; align-items: center; }
+        .fb-author-name { font-weight: bold; font-size: 14px; color: var(--text); }
+        .fb-post-time { font-size: 11px; color: var(--gray); display: flex; align-items: center; gap: 4px; }
+        .fb-post-text { padding: 0 12px 10px 12px; font-size: 14px; line-height: 1.4; color: var(--text); }
+        .fb-post-img { width: 100%; max-height: 380px; object-fit: cover; }
+        
+        .fb-stats-row { display: flex; justify-content: space-between; padding: 8px 12px; font-size: 12px; color: var(--gray); border-bottom: 1px solid var(--border); }
+        .fb-action-row { display: flex; justify-content: space-around; padding: 3px 0; }
+        .fb-action-btn { background: none; border: none; color: var(--gray); font-weight: 600; font-size: 13px; cursor: pointer; padding: 8px 0; flex: 1; display: flex; justify-content: center; align-items: center; gap: 6px; border-radius: 4px; }
+        .fb-action-btn:hover { background: #f0f2f5; }
+        .fb-action-btn.liked { color: var(--primary); }
+
+        .comments-box { padding: 8px 12px 12px 12px; background: #f8f9fa; border-top: 1px solid #eee; display: none; }
+        .comment-item { font-size: 13px; margin-bottom: 6px; padding: 6px 10px; background: white; border-radius: 12px; border: 1px solid var(--border); }
+        .comment-input-row { display: flex; gap: 6px; margin-top: 8px; }
+        .comment-input-row input { flex: 1; padding: 7px 12px; border: 1px solid var(--border); border-radius: 20px; font-size: 13px; outline: none; background: #f0f2f5; }
+        .comment-input-row button { background: var(--primary); color: white; border: none; padding: 0 14px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; }
+
+        /* Reels Section */
+        .reel-container { height: calc(100vh - 110px); overflow-y: scroll; scroll-snap-type: y mandatory; background: #000; }
+        .reel-item { height: 100%; width: 100%; scroll-snap-align: start; position: relative; display: flex; flex-direction: column; justify-content: flex-end; color: white; padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.85), transparent 50%), #1a1a2e; }
+        .reel-video-placeholder { position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%); text-align: center; opacity: 0.7; }
+        .reel-info { z-index: 2; }
+        .reel-info h3 { font-size: 17px; margin-bottom: 5px; }
+        .reel-info p { font-size: 14px; opacity: 0.9; }
+
+        /* Profile Page */
+        .profile-container { padding: 15px; }
+        .profile-header-card { 
+            background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%); 
+            padding: 25px 20px; border-radius: 20px; text-align: center; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border);
+        }
+        .profile-pic { 
+            width: 90px; height: 90px; border-radius: 50%; background: var(--primary); color: white; 
+            font-size: 36px; font-weight: bold; display: flex; justify-content: center; align-items: center; 
+            margin: 0 auto 12px; box-shadow: 0 6px 15px rgba(24, 119, 242, 0.35); border: 3px solid white;
+        }
+        .profile-name { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+        .profile-badge { font-size: 12px; background: #e7f3ff; color: var(--primary); padding: 3px 10px; border-radius: 10px; font-weight: 700; display: inline-block; margin-bottom: 15px; }
+        .profile-info-grid { display: flex; flex-direction: column; gap: 8px; text-align: left; background: white; padding: 14px; border-radius: 12px; border: 1px solid var(--border); margin-top: 10px; }
+        .profile-info-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #444; }
+        .profile-info-item span { font-weight: 700; color: #333; width: 85px; }
+        .logout-btn { 
+            background: #ffebee; color: #c62828; border: none; padding: 12px 20px; 
+            border-radius: 12px; font-weight: bold; margin-top: 15px; cursor: pointer; width: 100%; transition: background 0.2s; font-size: 14px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 450px; height: 55px;
+            background: var(--white); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 100;
+        }
+        .nav-item { background: none; border: none; font-size: 22px; color: var(--gray); cursor: pointer; flex: 1; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active::after { content: ''; position: absolute; bottom: 0; width: 100%; height: 3px; background: var(--primary); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- AUTH SCREEN -->
+    <div id="auth-screen">
+        <div class="auth-wrapper">
+            <div class="auth-card">
+                <div class="brand-logo">HandBook</div>
+                <div class="brand-tagline" id="authTagline">সুরক্ষিত অ্যাকাউন্টে লগইন করুন</div>
+                
+                <div id="authError" class="error-msg"></div>
+                <div id="authSuccess" class="success-msg"></div>
+
+                <!-- Login Form -->
+                <div class="auth-container" id="loginFormContainer">
+                    <input type="text" id="loginEmailPhone" class="auth-input" placeholder="Gmail অথবা ১১ ডিজিটের মোবাইল নম্বর">
+                    <input type="password" id="loginPass" class="auth-input" placeholder="পাসওয়ার্ড">
+                    <button class="auth-btn" onclick="handleLogin()">লগইন করুন</button>
+                    <div class="forgot-pass"><span onclick="toggleAuthMode('forgot')">পাসওয়ার্ড ভুলে গেছেন?</span></div>
+                    <div class="toggle-auth">অ্যাকাউন্ট নেই? <span onclick="toggleAuthMode('signup')">নতুন অ্যাকাউন্ট তৈরি করুন</span></div>
+                </div>
+
+                <!-- Signup Form -->
+                <div class="auth-container" id="signupFormContainer" style="display: none;">
+                    <div class="name-row">
+                        <input type="text" id="signupFirstName" class="auth-input" placeholder="First Name *">
+                        <input type="text" id="signupMidName" class="auth-input" placeholder="Mid Name">
+                    </div>
+                    <input type="text" id="signupLastName" class="auth-input" placeholder="Last Name *">
+                    <div class="dob-container">
+                        <span class="dob-label">Date of Birth (বয়স কমপক্ষে ১০ বছর হতে হবে) *:</span>
+                        <input type="date" id="signupDob" class="auth-input">
+                    </div>
+
+                    <input type="email" id="signupEmail" class="auth-input" placeholder="Gmail Address (e.g. name@gmail.com) *" oninput="liveValidateEmail()">
+                    <span id="emailHint" class="field-hint"></span>
+
+                    <input type="tel" id="signupPhone" class="auth-input" maxlength="11" placeholder="Phone Number (01XXXXXXXXX) *" oninput="liveValidatePhone()">
+                    <span id="phoneHint" class="field-hint"></span>
+
+                    <input type="password" id="signupPass" class="auth-input" placeholder="New Password (কমপক্ষে ৬ অক্ষর) *">
+                    <button class="auth-btn" onclick="handleSignup()">নিবন্ধন করুন (Sign Up)</button>
+                    <div class="toggle-auth">ইতিমধ্যে অ্যাকাউন্ট আছে? <span onclick="toggleAuthMode('login')">লগইন করুন</span></div>
+                </div>
+
+                <!-- Forgot Password Form -->
+                <div class="auth-container" id="forgotFormContainer" style="display: none;">
+                    <input type="text" id="forgotEmailPhone" class="auth-input" placeholder="আপনার নিবন্ধিত Gmail বা নম্বর দিন">
+                    <div class="dob-container">
+                        <span class="dob-label">আপনার জন্মতারিখ (যাচাইয়ের জন্য):</span>
+                        <input type="date" id="forgotDob" class="auth-input">
+                    </div>
+                    <input type="password" id="newForgotPass" class="auth-input" placeholder="নতুন পাসওয়ার্ড দিন (কমপক্ষে ৬ অক্ষর)">
+                    <button class="auth-btn" onclick="handleResetPassword()">পাসওয়ার্ড পরিবর্তন করুন</button>
+                    <div class="toggle-auth">মনে পড়েছে? <span onclick="toggleAuthMode('login')">লগইন পেজে ফিরে যান</span></div>
+                </div>
+
+            </div>
+        </div>
+        <div class="tat-footer">
+            <span class="tat-from">from</span>
+            <div class="tat-brand"><span>❖</span> <span>TAT</span></div>
+        </div>
+    </div>
+
+    <!-- MESSENGER MODAL SCREEN -->
+    <div id="messenger-screen">
+        <!-- Contact List View -->
+        <div id="messengerHome" style="display: flex; flex-direction: column; height: 100%;">
+            <div class="msg-header">
+                <div class="msg-header-left">
+                    <button class="msg-back-btn" onclick="closeMessenger()">←</button>
+                    <div class="msg-title">মেসেঞ্জার (Messenger)</div>
+                </div>
+            </div>
+            <div class="msg-chat-list" id="contactList">
+                <!-- Dynamically loaded contacts -->
+            </div>
+        </div>
+
+        <!-- Active Chat Window View -->
+        <div class="chat-window" id="activeChatWindow">
+            <div class="msg-header">
+                <div class="msg-header-left">
+                    <button class="msg-back-btn" onclick="backToChatList()">←</button>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="contact-avatar" id="activeChatAvatar" style="width:35px; height:35px; font-size:15px;">R</div>
+                        <div>
+                            <div class="contact-name" id="activeChatName" style="font-size:15px;">রহিম আহমেদ</div>
+                            <div style="font-size:11px; color:var(--online);">অনলাইন</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessagesContainer">
+                <!-- Message bubbles -->
+            </div>
+
+            <!-- EMOJI PICKER BAR -->
+            <div class="emoji-bar">
+                <button class="emoji-btn" onclick="insertEmoji('😊')">😊</button>
+                <button class="emoji-btn" onclick="insertEmoji('❤️')">❤️</button>
+                <button class="emoji-btn" onclick="insertEmoji('😂')">😂</button>
+                <button class="emoji-btn" onclick="insertEmoji('👍')">👍</button>
+                <button class="emoji-btn" onclick="insertEmoji('🔥')">🔥</button>
+                <button class="emoji-btn" onclick="insertEmoji('😍')">😍</button>
+                <button class="emoji-btn" onclick="insertEmoji('😢')">😢</button>
+                <button class="emoji-btn" onclick="insertEmoji('😎')">😎</button>
+                <button class="emoji-btn" onclick="insertEmoji('🙏')">🙏</button>
+                <button class="emoji-btn" onclick="insertEmoji('🎉')">🎉</button>
+            </div>
+
+            <div class="chat-input-bar">
+                <input type="text" id="chatInputText" placeholder="একটি মেসেজ লিখুন..." onkeypress="handleChatKeyPress(event)">
+                <button class="chat-send-btn" onclick="sendChatMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FB STYLE TOP HEADER -->
+    <div class="header">
+        <h1>HandBook</h1>
+        <div class="header-icons">
+            <button class="header-btn" onclick="focusPostInput()">➕</button>
+            <button class="header-btn">🔍</button>
+            <button class="header-btn" onclick="openMessenger()">💬</button>
+        </div>
+    </div>
+
+    <!-- TAB 1: FB STYLE NEWS FEED -->
+    <div id="tab-feed" class="tab-content active">
+        <div class="fb-create-post">
+            <div class="fb-post-input-row">
+                <div class="avatar" id="headerAvatar">H</div>
+                <input type="text" class="fb-fake-input" placeholder="আপনার মনে কী চলছে?" onclick="focusPostInput()">
+            </div>
+            <div class="fb-post-options">
+                <button class="fb-opt-btn">🔴 লাইভ ভিডিও</button>
+                <label class="fb-opt-btn" style="cursor:pointer;">
+                    🖼️ ছবি/ভিডিও
+                    <input type="file" id="postImage" accept="image/*" style="display:none" onchange="previewFile()">
+                </label>
+                <button class="fb-opt-btn">😊 ফিলিং/অ্যাক্টিভিটি</button>
+            </div>
+            <div id="postPreviewText" style="padding: 5px 12px; font-size: 13px;">
+                <input type="text" id="postText" class="auth-input" placeholder="এখানে আপনার পোস্টের বিস্তারিত লিখুন..." style="margin-top:8px; display:none;">
+                <span id="fileName" style="font-size: 11px; color: green;"></span>
+                <button class="auth-btn" id="publishBtn" style="padding: 8px; margin-top: 5px; display:none;" onclick="publishPost()">পোস্ট পাবলিশ করুন</button>
+            </div>
+        </div>
+
+        <!-- FRIENDS SUGGESTION & REQUEST SECTION -->
+        <div style="background: white; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+            <div style="padding: 10px 15px; font-weight: 800; font-size: 15px; border-bottom: 1px solid var(--border);">বন্ধুদের অনুরোধ ও পরামর্শ (Friends)</div>
+            <div class="friends-container" id="friendsListContainer">
+                <!-- Dynamically loaded friend items -->
+            </div>
+        </div>
+
+        <div class="fb-stories-container">
+            <div class="story-card create-story">
+                <div class="story-avatar-small" style="background:var(--primary); color:white; border:none; margin-bottom:5px;">➕</div>
+                <div style="color:black; font-size:11px; padding-bottom:5px;">স্টোরি তৈরি করুন</div>
+            </div>
+            <div class="story-card" style="background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.8)), #2c3e50;" onclick="openChatWithContact('রহিম আহমেদ', 'R')">
+                <div class="story-avatar-small">R</div>
+                <div>রহিম আহমেদ</div>
+            </div>
+            <div class="story-card" style="background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.8)), #1e3799;" onclick="openChatWithContact('করিম খান', 'K')">
+                <div class="story-avatar-small">K</div>
+                <div>করিম খান</div>
+            </div>
+        </div>
+
+        <div id="feedList"></div>
+    </div>
+
+    <!-- TAB 2: REELS -->
+    <div id="tab-reels" class="tab-content">
+        <div class="reel-container" id="reelsList">
+            <div class="reel-item">
+                <div class="reel-video-placeholder">
+                    <div style="font-size: 50px;">▶️</div>
+                    <p>রিলস ভিডিও প্লেয়ার</p>
+                </div>
+                <div class="reel-info">
+                    <h3>@handbook_official</h3>
+                    <p>HandBook রিলসে আপনাকে স্বাগতম! উপরে নিচে স্ক্রল করে রিলস দেখুন। #HandBook #Reels</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: PROFILE -->
+    <div id="tab-profile" class="tab-content">
+        <div class="profile-container">
+            <div class="profile-header-card">
+                <div class="profile-pic" id="profileAvatar">H</div>
+                <div class="profile-name" id="profileName">User Name</div>
+                <div class="profile-badge">Verified Account ✓</div>
+                
+                <div class="profile-info-grid">
+                    <div class="profile-info-item"><span>📧 Gmail:</span> <span id="pEmail" style="color:#555;">N/A</span></div>
+                    <div class="profile-info-item"><span>📞 ফোন:</span> <span id="pPhone" style="color:#555;">N/A</span></div>
+                    <div class="profile-info-item"><span>🎂 জন্মতারিখ:</span> <span id="pDob" style="color:#555;">N/A</span></div>
+                </div>
+                <button class="logout-btn" onclick="logout()">লগ আউট করুন</button>
+            </div>
+
+            <div style="margin: 20px 0 10px; font-weight: 800; color: #444; font-size: 15px;">আপনার পোস্টসমূহ</div>
+            <div id="myPostsList"></div>
+
+            <div class="tat-footer-dark">
+                <span class="tat-from">from</span>
+                <div class="tat-brand"><span>❖</span> <span>TAT</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('feed', this)">🏠</button>
+        <button class="nav-item" onclick="switchTab('reels', this)">🎬</button>
+        <button class="nav-item" onclick="switchTab('profile', this)">👤</button>
+    </div>
+
+</div>
+
+<script>
+    let registeredUsers = JSON.parse(localStorage.getItem('hb_all_users')) || [];
+    let currentUser = JSON.parse(localStorage.getItem('hb_active_session')) || null;
+
+    let posts = JSON.parse(localStorage.getItem('hb_posts')) || [
+        {
+            id: 1,
+            author: "HandBook Team",
+            time: "এইমাত্র",
+            text: "HandBook (from TAT) অ্যাপে আপনাকে স্বাগতম! এখন ফ্রেন্ড রিকোয়েস্ট এক্সেপ্ট করে মেসেঞ্জারে ইমোজিসহ চ্যাট করা যাবে।",
+            image: "",
+            likes: 12,
+            likedByMe: false,
+            comments: ["অসাধারণ আপডেট!"]
+        }
+    ];
+
+    // ফ্রেন্ড লিস্ট ডেটাবেস
+    let friendsData = JSON.parse(localStorage.getItem('hb_friends')) || {
+        "রহিম আহমেদ": "accepted",
+        "করিম খান": "accepted",
+        "নুসরাত জাহান": "pending" // যে রিকোয়েস্ট দিয়েছে বা অপেক্ষমাণ
+    };
+
+    // মেসেঞ্জার চ্যাট ডেটাবেস
+    let chatHistory = JSON.parse(localStorage.getItem('hb_chat_history')) || {
+        "রহিম আহমেদ": [
+            { sender: "রহিম আহমেদ", text: "হ্যালো! কেমন আছেন 😊", time: "১০:৩০ AM" },
+            { sender: "me", text: "আলহামদুলিল্লাহ ভালো আছি ❤️", time: "১০:৩১ AM" }
+        ],
+        "করিম খান": [
+            { sender: "করিম খান", text: "নতুন প্রোফাইলটা দারুণ হয়েছে 👍", time: "গতকাল" }
+        ]
+    };
+
+    let activeChatContact = "";
+    let selectedImageBase64 = "";
+
+    function isValidGmail(email) { return /^[a-zA-Z0-9._%+-]{3,}@gmail\.com$/.test(email.toLowerCase()); }
+    function isValidBDPhone(phone) { return /^01[3-9]\d{8}$/.test(phone); }
+
+    function checkAge(dobString) {
+        const birthDate = new Date(dobString);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+        return age >= 10;
+    }
+
+    function liveValidateEmail() {
+        const input = document.getElementById('signupEmail');
+        const hint = document.getElementById('emailHint');
+        const val = input.value.trim();
+        if (!val) { input.classList.remove('valid', 'invalid'); hint.style.display = 'none'; return; }
+        if (isValidGmail(val)) {
+            input.classList.remove('invalid'); input.classList.add('valid');
+            hint.className = 'field-hint ok'; hint.innerText = "✓ সঠিক Gmail অ্যাড্রেস";
+        } else {
+            input.classList.remove('valid'); input.classList.add('invalid');
+            hint.className = 'field-hint err'; hint.innerText = "✗ সঠিক Gmail দিন (যেমন: yourname@gmail.com)";
+        }
+    }
+
+    function liveValidatePhone() {
+        const input = document.getElementById('signupPhone');
+        const hint = document.getElementById('phoneHint');
+        input.value = input.value.replace(/[^0-9]/g, '');
+        const val = input.value;
+        if (!val) { input.classList.remove('valid', 'invalid'); hint.style.display = 'none'; return; }
+        if (isValidBDPhone(val)) {
+            input.classList.remove('invalid'); input.classList.add('valid');
+            hint.className = 'field-hint ok'; hint.innerText = "✓ সঠিক বাংলাদেশি মোবাইল নম্বর";
+        } else {
+            input.classList.remove('valid'); input.classList.add('invalid');
+            hint.className = 'field-hint err'; hint.innerText = "✗ সঠিক ১১ ডিজিটের নম্বর দিন (017/018/019/013/016...)";
+        }
+    }
+
+    function initApp() {
+        if (currentUser) {
+            document.getElementById('auth-screen').style.display = 'none';
+            updateProfileUI();
+        }
+        renderPosts();
+        renderFriendsList();
+        renderContactList();
+    }
+
+    function showError(msg) {
+        hideSuccess();
+        const errBox = document.getElementById('authError');
+        errBox.innerText = msg;
+        errBox.style.display = 'block';
+    }
+
+    function hideError() { document.getElementById('authError').style.display = 'none'; }
+    function showSuccess(msg) {
+        hideError();
+        const succBox = document.getElementById('authSuccess');
+        succBox.innerText = msg;
+        succBox.style.display = 'block';
+    }
+    function hideSuccess() { document.getElementById('authSuccess').style.display = 'none'; }
+
+    function toggleAuthMode(mode) {
+        hideError(); hideSuccess();
+        document.getElementById('loginFormContainer').style.display = 'none';
+        document.getElementById('signupFormContainer').style.display = 'none';
+        document.getElementById('forgotFormContainer').style.display = 'none';
+
+        if (mode === 'signup') {
+            document.getElementById('signupFormContainer').style.display = 'block';
+            document.getElementById('authTagline').innerText = "নতুন অ্যাকাউন্ট তৈরি করতে তথ্যগুলো দিন";
+        } else if (mode === 'forgot') {
+            document.getElementById('forgotFormContainer').style.display = 'block';
+            document.getElementById('authTagline').innerText = "অ্যাকাউন্ট রিকভার করুন";
+        } else {
+            document.getElementById('loginFormContainer').style.display = 'block';
+            document.getElementById('authTagline').innerText = "সুরক্ষিত অ্যাকাউন্টে লগইন করুন";
+        }
+    }
+
+    function handleSignup() {
+        hideError();
+        const firstName = document.getElementById('signupFirstName').value.trim();
+        const midName = document.getElementById('signupMidName').value.trim();
+        const lastName = document.getElementById('signupLastName').value.trim();
+        const dob = document.getElementById('signupDob').value;
+        const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+        const phone = document.getElementById('signupPhone').value.trim();
+        const pass = document.getElementById('signupPass').value.trim();
+
+        if (!firstName || !lastName || !dob || !email || !phone || !pass) {
+            showError("দয়া করে (*) চিহ্নিত সব ঘর পূরণ করুন!");
+            return;
+        }
+
+        if (!checkAge(dob)) {
+            showError("দুঃখিত! আপনার বয়স ১০ বছরের কম হওয়ায় আপনি এই অ্যাপে অ্যাকাউন্ট খুলতে পারবেন না।");
+            return;
+        }
+
+        if (!isValidGmail(email)) { showError("ভুল Gmail দিয়েছেন! সঠিক @gmail.com অ্যাড্রেস দিন।"); return; }
+        if (!isValidBDPhone(phone)) { showError("ভুল মোবাইল নম্বর! সঠিক ১১ ডিজিটের নম্বর দিন।"); return; }
+        if (pass.length < 6) { showError("পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে!"); return; }
+
+        const alreadyExists = registeredUsers.some(u => u.email === email || u.phone === phone);
+        if (alreadyExists) { showError("এই Gmail বা মোবাইল নম্বর দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা হয়েছে!"); return; }
+
+        const fullName = `${firstName} ${midName ? midName + ' ' : ''}${lastName}`;
+        const newUser = { firstName, midName, lastName, name: fullName, dob, email, phone, pass };
+        
+        registeredUsers.push(newUser);
+        localStorage.setItem('hb_all_users', JSON.stringify(registeredUsers));
+
+        currentUser = newUser;
+        localStorage.setItem('hb_active_session', JSON.stringify(currentUser));
+
+        document.getElementById('auth-screen').style.display = 'none';
+        updateProfileUI();
+        renderPosts();
+    }
+
+    function handleLogin() {
+        hideError();
+        const emailPhone = document.getElementById('loginEmailPhone').value.trim().toLowerCase();
+        const pass = document.getElementById('loginPass').value.trim();
+
+        if (!emailPhone || !pass) { showError("Gmail বা মোবাইল নম্বর এবং পাসওয়ার্ড দিন!"); return; }
+
+        const matchedUser = registeredUsers.find(u => u.email === emailPhone || u.phone === emailPhone);
+        if (!matchedUser) { showError("এই Gmail বা নম্বরে কোনো অ্যাকাউন্ট নেই! আগে Sign Up করুন।"); return; }
+        if (matchedUser.pass !== pass) { showError("ভুল পাসওয়ার্ড দিয়েছেন! সঠিক পাসওয়ার্ড দিন।"); return; }
+
+        currentUser = matchedUser;
+        localStorage.setItem('hb_active_session', JSON.stringify(currentUser));
+        
+        document.getElementById('auth-screen').style.display = 'none';
+        updateProfileUI();
+        renderPosts();
+    }
+
+    function handleResetPassword() {
+        hideError();
+        const emailPhone = document.getElementById('forgotEmailPhone').value.trim().toLowerCase();
+        const dob = document.getElementById('forgotDob').value;
+        const newPass = document.getElementById('newForgotPass').value.trim();
+
+        if (!emailPhone || !dob || !newPass) { showError("সবগুলো তথ্য সঠিকভাবে পূরণ করুন!"); return; }
+        if (newPass.length < 6) { showError("নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে!"); return; }
+
+        const user = registeredUsers.find(u => u.email === emailPhone || u.phone === emailPhone);
+        if (!user) { showError("এই Gmail বা নম্বরের সাথে কোনো অ্যাকাউন্ট পাওয়া যায়নি!"); return; }
+        if (user.dob !== dob) { showError("আপনার দেওয়া জন্মতারিখটি সঠিক নয়!"); return; }
+
+        user.pass = newPass;
+        localStorage.setItem('hb_all_users', JSON.stringify(registeredUsers));
+
+        showSuccess("পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে! এবার নতুন পাসওয়ার্ড দিয়ে লগইন করুন।");
+        setTimeout(() => { toggleAuthMode('login'); }, 2000);
+    }
+
+    function updateProfileUI() {
+        if (!currentUser) return;
+        const firstLetter = currentUser.firstName ? currentUser.firstName.charAt(0).toUpperCase() : 'H';
+        document.getElementById('headerAvatar').innerText = firstLetter;
+        document.getElementById('profileAvatar').innerText = firstLetter;
+        document.getElementById('profileName').innerText = currentUser.name;
+        
+        document.getElementById('pEmail').innerText = currentUser.email || 'N/A';
+        document.getElementById('pPhone').innerText = currentUser.phone || 'N/A';
+        document.getElementById('pDob').innerText = currentUser.dob || 'N/A';
+    }
+
+    function logout() {
+        localStorage.removeItem('hb_active_session');
+        location.reload();
+    }
+
+    /* --- FRIENDS & REQUEST LOGIC --- */
+    function renderFriendsList() {
+        const container = document.getElementById('friendsListContainer');
+        container.innerHTML = '';
+
+        for (let name in friendsData) {
+            const status = friendsData[name];
+            const firstChar = name.charAt(0).toUpperCase();
+            let btnHTML = '';
+
+            if (status === 'accepted') {
+                btnHTML = `<button class="friend-btn accepted" onclick="openChatWithContact('${name}', '${firstChar}')">💬 মেসেজ</button>`;
+            } else if (status === 'pending') {
+                btnHTML = `<button class="friend-btn" onclick="acceptFriend('${name}')">গ্রহণ করুন (Accept)</button>`;
+            } else {
+                btnHTML = `<button class="friend-btn" onclick="sendFriendAdd('${name}')">➕ Add Friend</button>`;
+            }
+
+            container.innerHTML += `
+                <div class="friend-card">
+                    <div class="friend-info">
+                        <div class="contact-avatar" style="width:40px; height:40px; font-size:16px;">${firstChar}</div>
+                        <div>
+                            <div class="contact-name">${name}</div>
+                            <div class="contact-sub">${status === 'accepted' ? 'আপনার বন্ধু' : (status === 'pending' ? 'ফ্রেন্ড রিকোয়েস্ট এসেছে' : 'পরামর্শ')}</div>
+                        </div>
+                    </div>
+                    ${btnHTML}
+                </div>
+            `;
+        }
+    }
+
+    function sendFriendAdd(name) {
+        friendsData[name] = 'pending';
+        localStorage.setItem('hb_friends', JSON.stringify(friendsData));
+        renderFriendsList();
+    }
+
+    function acceptFriend(name) {
+        friendsData[name] = 'accepted';
+        // এক্সেপ্ট করলেই মেসেঞ্জার চ্যাট লিস্টে অটোমেটিক যুক্ত হয়ে যাবে
+        if (!chatHistory[name]) {
+            chatHistory[name] = [{ sender: name, text: "আমরা এখন বন্ধু! 👋", time: "এইমাত্র" }];
+            localStorage.setItem('hb_chat_history', JSON.stringify(chatHistory));
+        }
+        localStorage.setItem('hb_friends', JSON.stringify(friendsData));
+        renderFriendsList();
+        renderContactList();
+    }
+
+    /* --- MESSENGER & EMOJI LOGIC --- */
+    function openMessenger() {
+        document.getElementById('messenger-screen').style.display = 'flex';
+        document.getElementById('messengerHome').style.display = 'flex';
+        document.getElementById('activeChatWindow').style.display = 'none';
+        renderContactList();
+    }
+
+    function closeMessenger() { document.getElementById('messenger-screen').style.display = 'none'; }
+
+    function renderContactList() {
+        const listContainer = document.getElementById('contactList');
+        listContainer.innerHTML = '';
+
+        for (let contactName in chatHistory) {
+            // শুধুমাত্র যাদের সাথে ফ্রেন্ডশিপ accepted বা চ্যাট হিস্ট্রি আছে
+            const msgs = chatHistory[contactName];
+            const lastMsg = msgs.length > 0 ? msgs[msgs.length - 1].text : "মেসেজ পাঠান";
+            const firstChar = contactName.charAt(0).toUpperCase();
+
+            listContainer.innerHTML += `
+                <div class="chat-contact-item" onclick="openChatWithContact('${contactName}', '${firstChar}')">
+                    <div class="contact-avatar">
+                        ${firstChar}
+                        <div class="online-dot"></div>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-name">${contactName}</div>
+                        <div class="contact-sub">${lastMsg}</div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function openChatWithContact(name, char) {
+        activeChatContact = name;
+        document.getElementById('messenger-screen').style.display = 'flex';
+        document.getElementById('messengerHome').style.display = 'none';
+        document.getElementById('activeChatWindow').style.display = 'flex';
+        
+        document.getElementById('activeChatName').innerText = name;
+        document.getElementById('activeChatAvatar').innerText = char;
+        
+        renderChatMessages();
+    }
+
+    function backToChatList() {
+        document.getElementById('activeChatWindow').style.display = 'none';
+        document.getElementById('messengerHome').style.display = 'flex';
+        renderContactList();
+    }
+
+    function renderChatMessages() {
+        const container = document.getElementById('chatMessagesContainer');
+        container.innerHTML = '';
+
+        const msgs = chatHistory[activeChatContact] || [];
+        msgs.forEach(m => {
+            const isMe = m.sender === 'me';
+            const bubbleClass = isMe ? 'bubble outgoing' : 'bubble incoming';
+            container.innerHTML += `<div class="${bubbleClass}">${m.text}</div>`;
+        });
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // ইমোজি চ্যাট ইনপুটে যুক্ত করা
+    function insertEmoji(emoji) {
+        const input = document.getElementById('chatInputText');
+        input.value += emoji;
+        input.focus();
+    }
+
+    function sendChatMessage() {
+        const input = document.getElementById('chatInputText');
+        const text = input.value.trim();
+        if (!text) return;
+
+        if (!chatHistory[activeChatContact]) {
+            chatHistory[activeChatContact] = [];
+        }
+
+        chatHistory[activeChatContact].push({
+            sender: 'me',
+            text: text,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+
+        localStorage.setItem('hb_chat_history', JSON.stringify(chatHistory));
+        input.value = '';
+        renderChatMessages();
+    }
+
+    function handleChatKeyPress(e) { if (e.key === 'Enter') sendChatMessage(); }
+
+    function focusPostInput() {
+        document.getElementById('postText').style.display = 'block';
+        document.getElementById('publishBtn').style.display = 'block';
+        document.getElementById('postText').focus();
+    }
+
+    function previewFile() {
+        const file = document.getElementById('postImage').files[0];
+        if (file) {
+            document.getElementById('fileName').innerText = "ছবি যুক্ত হয়েছে ✓";
+            document.getElementById('postText').style.display = 'block';
+            document.getElementById('publishBtn').style.display = 'block';
+            const reader = new FileReader();
+            reader.onloadend = () => { selectedImageBase64 = reader.result; };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function publishPost() {
+        const text = document.getElementById('postText').value.trim();
+        if (!text && !selectedImageBase64) return;
+
+        const authorName = currentUser ? currentUser.name : "User";
+        const newPost = {
+            id: Date.now(),
+            author: authorName,
+            authorEmail: currentUser ? currentUser.email : "",
+            time: "এইমাত্র",
+            text: text,
+            image: selectedImageBase64,
+            likes: 0,
+            likedByMe: false,
+            comments: []
+        };
+
+        posts.unshift(newPost);
+        saveAndRender();
+
+        document.getElementById('postText').value = '';
+        document.getElementById('postText').style.display = 'none';
+        document.getElementById('publishBtn').style.display = 'none';
+        document.getElementById('postImage').value = '';
+        document.getElementById('fileName').innerText = '';
+        selectedImageBase64 = "";
+    }
+
+    function toggleLike(id) {
+        const post = posts.find(p => p.id === id);
+        if (post) {
+            post.likedByMe = !post.likedByMe;
+            post.likes += post.likedByMe ? 1 : -1;
+            saveAndRender();
+        }
+    }
+
+    function toggleCommentBox(id) {
+        const box = document.getElementById(`comment-box-${id}`);
+        box.style.display = box.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function addComment(id) {
+        const input = document.getElementById(`comment-input-${id}`);
+        const text = input.value.trim();
+        if (!text) return;
+
+        const post = posts.find(p => p.id === id);
+        if (post) {
+            const authorName = currentUser ? currentUser.name : "User";
+            post.comments.push(`${authorName}: ${text}`);
+            saveAndRender();
+            document.getElementById(`comment-box-${id}`).style.display = 'block';
+        }
+    }
+
+    function saveAndRender() {
+        localStorage.setItem('hb_posts', JSON.stringify(posts));
+        renderPosts();
+    }
+
+    function renderPosts() {
+        const feedList = document.getElementById('feedList');
+        const myPostsList = document.getElementById('myPostsList');
+        feedList.innerHTML = '';
+        myPostsList.innerHTML = '';
+
+        posts.forEach(post => {
+            const firstChar = post.author ? post.author.charAt(0).toUpperCase() : 'U';
+            const postHTML = `
+                <div class="fb-post-card">
+                    <div class="fb-post-header">
+                        <div class="fb-author-row">
+                            <div class="avatar" style="width:36px; height:36px; font-size:15px;">${firstChar}</div>
+                            <div>
+                                <div class="fb-author-name">${post.author}</div>
+                                <div class="fb-post-time">${post.time} · 🌐</div>
+                            </div>
+                        </div>
+                        <span style="color:var(--gray); font-weight:bold; cursor:pointer;">•••</span>
+                    </div>
+                    <div class="fb-post-text">${post.text}</div>
+                    ${post.image ? `<img src="${post.image}" class="fb-post-img">` : ''}
+                    <div class="fb-stats-row">
+                        <span>👍 ${post.likes}</span>
+                        <span>${post.comments.length} কমেন্ট</span>
+                    </div>
+                    <div class="fb-action-row">
+                        <button class="fb-action-btn ${post.likedByMe ? 'liked' : ''}" onclick="toggleLike(${post.id})">👍 লাইক</button>
+                        <button class="fb-action-btn" onclick="toggleCommentBox(${post.id})">💬 কমেন্ট</button>
+                        <button class="fb-action-btn">↪️ শেয়ার</button>
+                    </div>
+                    <div class="comments-box" id="comment-box-${post.id}">
+                        ${post.comments.map(c => `<div class="comment-item">${c}</div>`).join('')}
+                        <div class="comment-input-row">
+                            <input type="text" id="comment-input-${post.id}" placeholder="একটি কমেন্ট লিখুন...">
+                            <button onclick="addComment(${post.id})">পাঠান</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            feedList.innerHTML += postHTML;
+            if (currentUser && (post.authorEmail === currentUser.email || post.author === currentUser.name)) {
+                myPostsList.innerHTML += postHTML;
+            }
+        });
+    }
+
+    function switchTab(tabName, btn) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    initApp();
+</script>
+
+</body>
+</html>
